@@ -28,6 +28,6 @@ def lambda_handler(event, context):
             print "Found EBS volume %s on instance %s" % (
                 vol_id, instance['InstanceId'])
 
-            ec.create_snapshot(
-                VolumeId=vol_id,
+            ec2.instances.stop(
+                InstanceIds=ids,
             )
