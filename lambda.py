@@ -14,7 +14,7 @@ def lambda_handler(event, context):
         'Reservations', []
     )
 
-    # Is this function only giving you the sum of instances? 
+    # Is this function only giving you the sum of instances?
     instances = sum(
         [
             [i for i in r['Instances']]
@@ -23,21 +23,9 @@ def lambda_handler(event, context):
 
     print "Found %d instances to be shut down at 9pm" % len(instances)
 
-    for instance in instances:
-        for dev in instance['BlockDeviceMappings']:
-            if dev.get('Ebs', None) is None:
-                continue
-            vol_id = dev['Ebs']['VolumeId']
-            print "Found EBS volume %s on instance %s" % (
-                vol_id, instance['InstanceId'])
-
-            # This should be the method to stop instances. Where
-            # INSTANCEIDS is an array of the id's of your instances
-            # ec.filter(InstanceIds=INSTANCEIDS).stop()
-            # ec.filter(InstanceIds=INSTANCEIDS).terminate()
-            ec2.instances.stop(
-                InstanceIds=ids,
-            )
+instance_ids = [ins['InstanceId'] for ins in instances]
+response = ec.stop_instances(InstanceIds=instance_ids)
+print "Stopping %d instances NOW" % len(response['StoppingInstances']
 
 # NOTE: I'd use stronger variable names for better readability.
 # e.g. r['Instances'] -> This doesn't let you know that r is a reservation
